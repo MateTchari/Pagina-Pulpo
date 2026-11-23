@@ -29,11 +29,12 @@ export default function Login() {
           <div className="notice">
             <strong>Versión de demostración</strong>
             <p>
-              La tienda se puede recorrer sin iniciar sesión. La administración
-              estará disponible cuando conectemos la base de datos.
+              Podés probar el panel administrativo sin contraseña. Los
+              productos, pedidos e inventario son de ejemplo y los cambios solo
+              se guardan en tu navegador.
             </p>
-            <Link href="/tienda" className="button">
-              Probar la tienda ↗
+            <Link href="/admin/demo" className="button">
+              Entrar al panel de prueba ↗
             </Link>
           </div>
         ) : (

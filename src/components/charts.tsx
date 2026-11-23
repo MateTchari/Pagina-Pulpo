@@ -59,6 +59,7 @@ export function SalesChart({
           <Tooltip formatter={(v) => money(Number(v), currency)} />
           <Legend />
           <Area
+            isAnimationActive={false}
             type="monotone"
             dataKey="revenue"
             name="Ingresos por ventas"
@@ -67,6 +68,7 @@ export function SalesChart({
             fill="url(#revenue)"
           />
           <Area
+            isAnimationActive={false}
             type="monotone"
             dataKey="cost"
             name="Costo de mercadería"

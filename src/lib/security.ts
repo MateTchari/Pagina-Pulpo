@@ -21,6 +21,7 @@ export async function requireAdmin() {
   return user;
 }
 export async function requireAdminPage() {
+  if (isDemoMode()) redirect("/admin/demo");
   try {
     return await requireAdmin();
   } catch (error) {

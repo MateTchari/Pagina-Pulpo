@@ -11,6 +11,11 @@ import { settings } from "@/lib/services";
 import { ProductCard } from "@/components/product-card";
 import { Empty } from "@/components/ui";
 import { Brand } from "@/components/brand";
+import { isDemoMode } from "@/lib/mode";
+import {
+  DemoProductGrid,
+  DemoBusinessDescription,
+} from "@/components/demo-store";
 export default async function Home() {
   const s = await settings();
   const products = await storeProducts({}, true);
@@ -82,7 +87,9 @@ export default async function Home() {
             Ver toda la colección <ArrowUpRight size={18} />
           </Link>
         </div>
-        {products.length ? (
+        {isDemoMode() ? (
+          <DemoProductGrid featured />
+        ) : products.length ? (
           <div className="product-grid">
             {products.map((p) => (
               <ProductCard key={p.id} product={p} currency={s.currency} />
@@ -101,7 +108,7 @@ export default async function Home() {
           <br />
           también cuenta <em>tu historia.</em>
         </h2>
-        <p>{s.description}</p>
+        <p>{isDemoMode() ? <DemoBusinessDescription /> : s.description}</p>
         <div className="values">
           <div>
             <Shirt />

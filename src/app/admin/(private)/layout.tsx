@@ -14,6 +14,7 @@ import { requireAdmin, AppError } from "@/lib/security";
 import { Logout } from "@/components/login-form";
 import { Brand } from "@/components/brand";
 import { settings } from "@/lib/services";
+import { isDemoMode } from "@/lib/mode";
 export const dynamic = "force-dynamic";
 const nav = [
   { href: "/admin", name: "Resumen", icon: LayoutDashboard },
@@ -33,6 +34,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  if (isDemoMode()) redirect("/admin/demo");
   let name = "";
   try {
     name = (await requireAdmin()).name;

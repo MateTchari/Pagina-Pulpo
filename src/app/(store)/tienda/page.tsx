@@ -2,6 +2,8 @@ import { storeProducts, storeOptions } from "@/lib/store-data";
 import { settings } from "@/lib/services";
 import { ProductCard } from "@/components/product-card";
 import { Empty } from "@/components/ui";
+import { isDemoMode } from "@/lib/mode";
+import { DemoCatalog } from "@/components/demo-store";
 export default async function Catalog({
   searchParams,
 }: {
@@ -9,6 +11,7 @@ export default async function Catalog({
 }) {
   const q = await searchParams,
     s = await settings();
+  if (isDemoMode()) return <DemoCatalog filters={q} />;
   const allVariants = await storeOptions();
   const products = await storeProducts(q);
   return (

@@ -1,11 +1,23 @@
-<<<<<<< HEAD
 # Tienda online + gestión integral
 
 ## Versión de demostración para el cliente
 
 El modo predeterminado ahora es **demo**, sin PostgreSQL ni claves. Subí los cambios a GitHub y Vercel usará `npm run build:vercel`: genera el cliente Prisma necesario para compilar, pero **no conecta una base, no aplica migraciones ni exige secretos**. Si habías configurado `APP_MODE=live` en Vercel, cambialo a `demo` y volvé a desplegar.
 
-El cliente puede navegar inicio, catálogo de muestra, filtros, variantes, carrito persistente y finalización de prueba. Un aviso identifica los precios, productos y stock como ejemplos. El checkout no envía datos ni crea pedidos; las escrituras, subidas y autenticación están bloqueadas en el backend. El carrito demo está separado del real. No se publican credenciales ni un acceso administrativo de prueba.
+El cliente puede navegar inicio, catálogo de muestra, filtros, variantes, carrito persistente y finalización de prueba. Un aviso identifica los precios, productos y stock como ejemplos. El checkout no envía los datos personales ingresados: crea un pedido simulado con un comprador genérico en el almacenamiento de ese navegador. Las escrituras, subidas y autenticación reales siguen bloqueadas en el backend. El carrito y los datos de demostración están separados del sistema conectado.
+
+### Panel administrativo de prueba
+
+Acceso: **`/admin/demo`**, sin contraseña. `/admin` redirige allí en modo demo; `/admin/login` muestra un botón para entrar. En modo real (`APP_MODE=live`), la ruta de demostración no está disponible y las rutas privadas conservan su autenticación.
+
+- Resumen con gráficos, ventas, costos y alertas de ejemplo.
+- Alta y edición de productos, fotos locales de hasta 1 MB, variantes, precios, costos y publicación.
+- Ingresos y bajas de inventario con motivo e historial; stock nunca negativo.
+- Pedidos simulados creados desde la tienda. Confirmar descuenta inventario; cancelar lo reintegra una sola vez. Las estadísticas usan precios y costos históricos.
+- Costos, margen, recargo e historial de cambios; configuración de nombre, descripción y acento.
+- Los cambios se reflejan en la tienda del mismo navegador y persisten al recargar. Otras personas tienen su propia copia de prueba. El botón **Restablecer demo** recupera los ejemplos iniciales y limpia el carrito de prueba.
+
+Almacenamiento: clave `santos-demo-business-v1` de localStorage. Si el navegador bloquea o agota el almacenamiento, el panel muestra un aviso y los cambios solo permanecen en la pestaña. La demo no es una base compartida ni realiza cobros; no ingresar información real de clientes.
 
 Para ejecutar esta versión localmente: `npm run dev`. No hace falta iniciar PostgreSQL.
 
@@ -127,6 +139,3 @@ Ver `DECISIONES_PENDIENTES.md`. Sin pasarela, cobros, impuestos, emails, envío 
 - [Better Auth y Prisma](https://better-auth.com/docs/adapters/prisma)
 - [Better Auth email/contraseña](https://better-auth.com/docs/authentication/email-password)
 - [PostgreSQL local embebido](https://github.com/leinelissen/embedded-postgres)
-=======
-# Pagina-Pulpo
->>>>>>> 36626ce5c016dbd7ea6e37a536314b44fea586b8

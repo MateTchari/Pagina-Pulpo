@@ -3,12 +3,14 @@ import { Header } from "@/components/header";
 import Link from "next/link";
 import { Brand } from "@/components/brand";
 import { isDemoMode } from "@/lib/mode";
+import { DemoStoreFrame } from "@/components/demo-store";
 export const dynamic = "force-dynamic";
 export default async function StoreLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  if (isDemoMode()) return <DemoStoreFrame>{children}</DemoStoreFrame>;
   const s = await settings();
   return (
     <div style={{ "--accent": s.accent } as React.CSSProperties}>

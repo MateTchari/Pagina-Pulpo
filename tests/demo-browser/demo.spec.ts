@@ -59,9 +59,9 @@ test("filtros, acceso administrativo y endpoints demo no requieren base", async 
     page.getByText("1 diseños encontrados", { exact: false }),
   ).toBeVisible();
   await page.goto("/admin/productos");
-  await expect(page).toHaveURL("/admin/login");
+  await expect(page).toHaveURL("/admin/demo");
   await expect(
-    page.getByText("Versión de demostración", { exact: true }),
+    page.getByText("Demostración interactiva", { exact: true }),
   ).toBeVisible();
   await expect(page.locator("input[type=password]")).toHaveCount(0);
   for (const path of [

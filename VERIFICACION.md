@@ -2,12 +2,22 @@
 
 ## Modo demo — 23 de noviembre de 2026
 
+### Panel administrativo interactivo
+
+`/admin/demo` disponible sin contraseña solo en modo demo. Productos, fotos locales, variantes, inventario, pedidos, estadísticas, costos, configuración y restablecimiento comparten un estado de prueba en el navegador. La tienda muestra los productos publicados y su stock actualizado. El checkout crea pedidos simulados sin enviar los datos personales ingresados al servidor.
+
+- `npm run test:demo`: 8 pruebas aprobadas, incluidas confirmación, cancelación sin duplicados, 10 → 8 → 10 unidades, snapshots monetarios, rechazo de stock insuficiente y validación de variantes.
+- `npm run test:demo:browser`: 4 pruebas aprobadas. Alta con imagen local, ingreso de stock, consulta pública del producto nuevo, pedido simulado, confirmación, edición posterior del precio, estadísticas históricas, cancelación, persistencia al recargar y restablecimiento. Ninguna solicitud POST durante el circuito interactivo.
+- Las siete secciones del panel se recorrieron a 390 px sin desbordamiento horizontal de página. Las tablas extensas tienen su propio desplazamiento.
+- Build de producción sin variables PostgreSQL ni claves correcto. Las escrituras del backend real siguen bloqueadas en demo; el panel usa solo datos locales.
+- Capturas: `test-results/demo-admin-dashboard.png` y `test-results/demo-admin-mobile.png`.
+
 - Build de Vercel ejecutado con `APP_MODE=demo` y `DATABASE_URL`, `DIRECT_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` y `NEXT_PUBLIC_APP_URL` vacíos: compilación correcta, sin migraciones ni conexión PostgreSQL.
 - `npm run test:demo`: 3 pruebas aprobadas; catálogo, filtros, configuración y cálculo de finalización con PostgreSQL deliberadamente inaccesible.
 - `npm run test:demo:browser`: 2 pruebas aprobadas sobre el servidor compilado de producción sin variables de base ni autenticación. Recorrido móvil, carrito persistente, finalización sin solicitudes POST, filtros y pantallas administrativas de información.
 - Escrituras de pedidos, productos, inventario, configuración y subidas; login y consulta de sesión: bloqueadas con HTTP 503 en demo.
 - `npm test`: 5 pruebas unitarias aprobadas. TypeScript sin errores.
-- La demostración no guarda compradores, pedidos, ventas ni stock. Modo real conservado y seleccionable con `APP_MODE=live`; las suites de integración PostgreSQL anteriores no se repitieron para este cambio.
+- La demostración no guarda compradores, pedidos, ventas ni stock en una base real. El panel incorporado guarda sus operaciones simuladas solo en el navegador. Modo real conservado y seleccionable con `APP_MODE=live`; las suites de integración PostgreSQL anteriores no se repitieron para este cambio.
 
 ## Actualización de identidad SANTOS
 

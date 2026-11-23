@@ -8,9 +8,10 @@ import { money } from "@/lib/money";
 import { checkoutSchema } from "@/lib/validation";
 import { Empty } from "./ui";
 import { Brand } from "./brand";
-import { summarizeDemoCart } from "@/lib/demo-products";
+import { demoOrderPreview } from "@/lib/demo-business";
+import { useDemoBusiness } from "./demo-business-provider";
 export function CartView({
-  currency,
+  currency: initialCurrency,
   checkout = false,
   enabled = false,
   demo = false,
@@ -20,13 +21,35 @@ export function CartView({
   enabled?: boolean;
   demo?: boolean;
 }) {
-  const { lines, quantity, clear, ready } = useCart(),
+  const { lines: storedLines, quantity, clear, ready } = useCart(),
     router = useRouter();
+  const business = useDemoBusiness();
+  const currency = business?.state
+    ? business.state.settings.currency
+    : initialCurrency;
+  const lines = business?.state
+    ? storedLines.map((line) => {
+        for (const p of business.state!.products) {
+          const v = p.variants.find((v) => v.id === line.variantId);
+          if (v)
+            return {
+              ...line,
+              name: p.name,
+              color: v.color,
+              size: v.size,
+              price: v.price,
+              image: p.image,
+            };
+        }
+        return line;
+      })
+    : storedLines;
   const [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
   const [demoDone, setDemoDone] = useState<{
     total: number;
     units: number;
+    orderId: string;
   } | null>(null);
   const total = lines.reduce((sum, l) => sum + l.price * l.quantity, 0);
   if (!ready) return <p role="status">Cargando tu carrito…</p>;
@@ -40,11 +63,18 @@ export function CartView({
           un total de muestra de {money(demoDone.total, currency)}.
         </p>
         <p className="notice">
-          No se creó ningún pedido, no se realizó un pago y no se enviaron tus
-          datos.
+          No se creó ningún pedido real, no se realizó un pago y no se enviaron
+          tus datos. El pedido simulado quedó en el panel de prueba de este
+          navegador.
         </p>
         <Link className="button" href="/tienda">
           Volver a probar la colección ↗
+        </Link>
+        <Link
+          className="button secondary"
+          href={`/admin/demo/ventas/${demoDone.orderId}`}
+        >
+          Ver pedido en el panel de prueba ↗
         </Link>
       </section>
     );
@@ -63,7 +93,19 @@ export function CartView({
     const form = new FormData(e.currentTarget);
     try {
       if (demo) {
-        setDemoDone(summarizeDemoCart(lines));
+        if (!business?.state)
+          throw new Error("Esperá a que termine de cargar la prueba.");
+        const preview = demoOrderPreview(business.state, lines),
+          orderId = `PRUEBA-${crypto.randomUUID()}`;
+        business.act({
+          type: "create-order",
+          id: orderId,
+          items: lines.map((l) => ({
+            variantId: l.variantId,
+            quantity: l.quantity,
+          })),
+        });
+        setDemoDone({ total: preview.total, units: preview.units, orderId });
         clear();
         return;
       }
@@ -160,8 +202,9 @@ export function CartView({
             <h2>{demo ? "Probá el último paso." : "Coordinemos tu pedido."}</h2>
             {demo && (
               <p className="notice">
-                Usá datos inventados. Este formulario es de prueba: no se envía
-                ni guarda la información ingresada.
+                Usá datos inventados. No se envía la información ingresada. El
+                panel guardará un pedido simulado con el nombre genérico
+                “Cliente de prueba”, solo en este navegador.
               </p>
             )}
             <label>

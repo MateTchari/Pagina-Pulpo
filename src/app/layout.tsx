@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { CartProvider } from "@/components/cart-provider";
 import "./globals.css";
 import { isDemoMode } from "@/lib/mode";
+import { DemoBusinessProvider } from "@/components/demo-business-provider";
 export const metadata: Metadata = {
   title: { default: "SANTOS · Remeras con identidad", template: "%s · SANTOS" },
   description: "SANTOS. Remeras y diseños con identidad propia.",
@@ -18,7 +19,13 @@ export default function RootLayout({
   return (
     <html lang="es-AR" data-scroll-behavior="smooth">
       <body>
-        <CartProvider demoMode={isDemoMode()}>{children}</CartProvider>
+        <CartProvider demoMode={isDemoMode()}>
+          {isDemoMode() ? (
+            <DemoBusinessProvider>{children}</DemoBusinessProvider>
+          ) : (
+            children
+          )}
+        </CartProvider>
       </body>
     </html>
   );
