@@ -3,12 +3,14 @@ import { db } from "@/lib/db";
 import { labels } from "@/lib/order-state";
 import { money } from "@/lib/money";
 import { Badge } from "@/components/ui";
+import { isDemoMode } from "@/lib/mode";
 export const metadata = { robots: { index: false, follow: false } };
 export default async function OrderPage({
   params,
 }: {
   params: Promise<{ token: string }>;
 }) {
+  if (isDemoMode()) notFound();
   const { token } = await params;
   if (!/^[a-f0-9]{64}$/.test(token)) notFound();
   const o = await db.order.findUnique({

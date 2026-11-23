@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LoginForm } from "@/components/login-form";
 import { Brand } from "@/components/brand";
+import { isDemoMode } from "@/lib/mode";
 export default function Login() {
   return (
     <main className="login-page">
@@ -24,11 +25,26 @@ export default function Login() {
         <span className="eyebrow">ACCESO PRIVADO</span>
         <h2>Hola de nuevo.</h2>
         <p className="muted">Ingresá para gestionar tu estudio.</p>
-        <LoginForm />
-        <p className="fine-print">
-          Solo administradores autorizados. El alta de usuarios se realiza desde
-          la terminal del proyecto.
-        </p>
+        {isDemoMode() ? (
+          <div className="notice">
+            <strong>Versión de demostración</strong>
+            <p>
+              La tienda se puede recorrer sin iniciar sesión. La administración
+              estará disponible cuando conectemos la base de datos.
+            </p>
+            <Link href="/tienda" className="button">
+              Probar la tienda ↗
+            </Link>
+          </div>
+        ) : (
+          <LoginForm />
+        )}
+        {!isDemoMode() && (
+          <p className="fine-print">
+            Solo administradores autorizados. El alta de usuarios se realiza
+            desde la terminal del proyecto.
+          </p>
+        )}
       </div>
     </main>
   );

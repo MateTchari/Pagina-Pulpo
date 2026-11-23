@@ -20,12 +20,19 @@ const Context = createContext<{
   quantity: () => {},
   clear: () => {},
 });
-export function CartProvider({ children }: { children: ReactNode }) {
+export function CartProvider({
+  children,
+  demoMode = false,
+}: {
+  children: ReactNode;
+  demoMode?: boolean;
+}) {
+  const storageKey = demoMode ? "santos-demo-cart-v1" : "tienda-cart-v1";
   const [lines, setLines] = useState<CartLine[]>([]),
     [ready, setReady] = useState(false);
   useEffect(() => {
     try {
-      const parsed = JSON.parse(localStorage.getItem("tienda-cart-v1") || "[]");
+      const parsed = JSON.parse(localStorage.getItem(storageKey) || "[]");
       if (Array.isArray(parsed))
         setLines(
           parsed
@@ -42,14 +49,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
         );
     } catch {}
     setReady(true);
-  }, []);
+  }, [storageKey]);
   useEffect(() => {
     if (ready) {
       try {
-        localStorage.setItem("tienda-cart-v1", JSON.stringify(lines));
+        localStorage.setItem(storageKey, JSON.stringify(lines));
       } catch {}
     }
-  }, [lines, ready]);
+  }, [lines, ready, storageKey]);
   return (
     <Context.Provider
       value={{

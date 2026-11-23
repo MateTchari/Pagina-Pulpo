@@ -1,4 +1,5 @@
 import "dotenv/config";
+process.env.APP_MODE = "live";
 import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
@@ -23,7 +24,8 @@ const {
   statistics,
   saveSettings,
 } = await import("../src/lib/services");
-const { auth } = await import("../src/lib/auth");
+const { getAuth } = await import("../src/lib/auth");
+const auth = getAuth();
 const adminId = crypto.randomUUID();
 const password = crypto.randomUUID() + "!aB1";
 const base = {

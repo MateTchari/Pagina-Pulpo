@@ -8,21 +8,46 @@ import { money } from "@/lib/money";
 import { checkoutSchema } from "@/lib/validation";
 import { Empty } from "./ui";
 import { Brand } from "./brand";
+import { summarizeDemoCart } from "@/lib/demo-products";
 export function CartView({
   currency,
   checkout = false,
   enabled = false,
+  demo = false,
 }: {
   currency: string;
   checkout?: boolean;
   enabled?: boolean;
+  demo?: boolean;
 }) {
   const { lines, quantity, clear, ready } = useCart(),
     router = useRouter();
   const [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
+  const [demoDone, setDemoDone] = useState<{
+    total: number;
+    units: number;
+  } | null>(null);
   const total = lines.reduce((sum, l) => sum + l.price * l.quantity, 0);
   if (!ready) return <p role="status">Cargando tu carrito…</p>;
+  if (demoDone)
+    return (
+      <section className="panel demo-complete" role="status">
+        <span className="eyebrow">DEMOSTRACIÓN SANTOS</span>
+        <h2>Prueba completada.</h2>
+        <p>
+          Recorriste la experiencia con {demoDone.units} unidades de ejemplo y
+          un total de muestra de {money(demoDone.total, currency)}.
+        </p>
+        <p className="notice">
+          No se creó ningún pedido, no se realizó un pago y no se enviaron tus
+          datos.
+        </p>
+        <Link className="button" href="/tienda">
+          Volver a probar la colección ↗
+        </Link>
+      </section>
+    );
   if (!lines.length)
     return (
       <Empty title="Tu carrito está esperando una idea">
@@ -37,6 +62,11 @@ export function CartView({
     setBusy(true);
     const form = new FormData(e.currentTarget);
     try {
+      if (demo) {
+        setDemoDone(summarizeDemoCart(lines));
+        clear();
+        return;
+      }
       const content = {
         customerName: form.get("name"),
         customerEmail: form.get("email"),
@@ -127,7 +157,13 @@ export function CartView({
             onSubmit={submit}
             className="panel form-stack"
           >
-            <h2>Coordinemos tu pedido.</h2>
+            <h2>{demo ? "Probá el último paso." : "Coordinemos tu pedido."}</h2>
+            {demo && (
+              <p className="notice">
+                Usá datos inventados. Este formulario es de prueba: no se envía
+                ni guarda la información ingresada.
+              </p>
+            )}
             <label>
               Nombre y apellido
               <input
@@ -136,6 +172,7 @@ export function CartView({
                 minLength={2}
                 maxLength={120}
                 autoComplete="name"
+                defaultValue={demo ? "Cliente de prueba" : undefined}
               />
             </label>
             <label>
@@ -146,6 +183,7 @@ export function CartView({
                 required
                 maxLength={200}
                 autoComplete="email"
+                defaultValue={demo ? "prueba@example.com" : undefined}
               />
             </label>
             <label>
@@ -154,13 +192,15 @@ export function CartView({
               <textarea name="note" maxLength={2000} rows={3} />
             </label>
             <p className="notice">
-              El pedido queda pendiente. El estudio coordinará con vos la
-              confirmación, el pago y la entrega. No estás realizando un pago en
-              esta página.
+              {demo
+                ? "Al finalizar verás una confirmación de prueba. No se registran ventas ni se reserva stock."
+                : "El pedido queda pendiente. El estudio coordinará con vos la confirmación, el pago y la entrega. No estás realizando un pago en esta página."}
             </p>
             <label className="check">
               <input type="checkbox" required />
-              Entiendo que el pedido requiere confirmación y no reserva stock.
+              {demo
+                ? "Entiendo que estoy probando una demostración sin compras reales."
+                : "Entiendo que el pedido requiere confirmación y no reserva stock."}
             </label>
             {error && (
               <p className="error" role="alert">
@@ -182,16 +222,21 @@ export function CartView({
           <strong>{money(total, currency)}</strong>
         </div>
         <p className="fine-print">
-          Precio definitivo de productos calculado por el servidor al crear el
-          pedido. Pago y entrega a coordinar; envío no incluido.
+          {demo
+            ? "Importes de ejemplo para revisar la experiencia. No representan precios comerciales definitivos."
+            : "Precio definitivo de productos calculado por el servidor al crear el pedido. Pago y entrega a coordinar; envío no incluido."}
         </p>
         {checkout ? (
           <button
             form="checkout-form"
-            disabled={busy || !enabled}
+            disabled={busy || (!enabled && !demo)}
             className="button wide"
           >
-            {busy ? "Registrando…" : "Crear pedido pendiente"}
+            {busy
+              ? "Procesando…"
+              : demo
+                ? "Finalizar prueba"
+                : "Crear pedido pendiente"}
             <ArrowUpRight size={18} />
           </button>
         ) : (
@@ -200,7 +245,7 @@ export function CartView({
             <ArrowUpRight size={18} />
           </Link>
         )}
-        {checkout && !enabled && (
+        {checkout && !enabled && !demo && (
           <p className="error">La tienda aún no habilitó los pedidos.</p>
         )}
       </aside>

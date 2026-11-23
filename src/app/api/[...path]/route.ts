@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Prisma, OrderStatus } from "@prisma/client";
 import { ZodError, z } from "zod";
 import { db } from "@/lib/db";
+import { isDemoMode } from "@/lib/mode";
 import {
   AppError,
   publicRateLimit,
@@ -20,6 +21,14 @@ export async function POST(
   request: NextRequest,
   ctx: { params: Promise<{ path: string[] }> },
 ) {
+  if (isDemoMode())
+    return NextResponse.json(
+      {
+        error:
+          "Esta es una demostración: no se guardan pedidos ni cambios administrativos.",
+      },
+      { status: 503 },
+    );
   try {
     sameOrigin(request);
     if (Number(request.headers.get("content-length") || 0) > 500000)

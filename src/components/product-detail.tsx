@@ -16,12 +16,14 @@ export function ProductDetail({
   images,
   variants,
   currency,
+  demo = false,
 }: {
   name: string;
   description: string;
   images: { url: string; alt: string }[];
   variants: Variant[];
   currency: string;
+  demo?: boolean;
 }) {
   const [color, setColor] = useState(variants[0]?.color ?? ""),
     [size, setSize] = useState(""),
@@ -117,7 +119,7 @@ export function ProductDetail({
         </fieldset>
         <p className="availability" aria-live="polite">
           {selected
-            ? `${selected.stock} unidades disponibles`
+            ? `${selected.stock} unidades ${demo ? "de ejemplo" : "disponibles"}`
             : "Elegí un color y talle para consultar disponibilidad."}
         </p>
         <label>
@@ -167,8 +169,9 @@ export function ProductDetail({
           )}
         </button>
         <p className="fine-print">
-          El stock y el precio se verifican al crear el pedido. La
-          disponibilidad se asegura al confirmar la venta.
+          {demo
+            ? "Precio y stock de muestra para probar la página. No se registran compras."
+            : "El stock y el precio se verifican al crear el pedido. La disponibilidad se asegura al confirmar la venta."}
         </p>
       </div>
     </div>

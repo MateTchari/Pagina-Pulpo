@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { storeProducts, storeOptions } from "@/lib/store-data";
 import { settings } from "@/lib/services";
 import { ProductCard } from "@/components/product-card";
 import { Empty } from "@/components/ui";
@@ -9,52 +9,8 @@ export default async function Catalog({
 }) {
   const q = await searchParams,
     s = await settings();
-  const allVariants = await db.variant.findMany({
-    where: { active: true, product: { active: true } },
-    select: { color: true, size: true },
-    distinct: ["color", "size"],
-  });
-  const min =
-    q.min && Number.isFinite(Number(q.min))
-      ? Math.max(0, Number(q.min))
-      : undefined;
-  const max =
-    q.max && Number.isFinite(Number(q.max))
-      ? Math.max(0, Number(q.max))
-      : undefined;
-  const products = await db.product.findMany({
-    where: {
-      active: true,
-      ...(q.q
-        ? {
-            OR: [
-              { name: { contains: q.q.slice(0, 150), mode: "insensitive" } },
-              {
-                description: {
-                  contains: q.q.slice(0, 150),
-                  mode: "insensitive",
-                },
-              },
-            ],
-          }
-        : {}),
-      variants: {
-        some: {
-          active: true,
-          ...(q.color ? { color: q.color } : {}),
-          ...(q.size ? { size: q.size } : {}),
-          ...(q.stock ? { stock: { gt: 0 } } : {}),
-          price: { gte: min, lte: max },
-        },
-      },
-    },
-    include: {
-      variants: { where: { active: true } },
-      images: { orderBy: { position: "asc" } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 200,
-  });
+  const allVariants = await storeOptions();
+  const products = await storeProducts(q);
   return (
     <section className="section">
       <span className="eyebrow">EXPLORÁ EL ESTUDIO</span>

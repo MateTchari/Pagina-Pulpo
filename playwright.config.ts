@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { defineConfig } from "@playwright/test";
+process.env.APP_MODE = "live";
 const originalDatabase =
   process.env.PLAYWRIGHT_ORIGINAL_DATABASE_URL ?? process.env.DATABASE_URL;
 if (
@@ -28,6 +29,7 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 120000,
     env: {
+      APP_MODE: "live",
       DATABASE_URL: process.env.TEST_DATABASE_URL,
       BETTER_AUTH_URL: "http://localhost:3001",
       NEXT_PUBLIC_APP_URL: "http://localhost:3001",

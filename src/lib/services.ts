@@ -5,6 +5,8 @@ import { AppError } from "./security";
 import { checkoutSchema, productSchema, settingsSchema } from "./validation";
 import { transitions } from "./order-state";
 import { z } from "zod";
+import { isDemoMode } from "./mode";
+import { demoSettings } from "./demo-products";
 
 export async function serial<T>(
   fn: (tx: Prisma.TransactionClient) => Promise<T>,
@@ -286,6 +288,7 @@ export async function saveSettings(raw: unknown) {
   });
 }
 export async function settings() {
+  if (isDemoMode()) return demoSettings;
   return (
     (await db.settings.findUnique({ where: { id: "business" } })) ?? {
       name: "SANTOS",

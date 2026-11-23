@@ -1,7 +1,8 @@
 import { headers } from "next/headers";
-import { auth } from "./auth";
+import { getAuth } from "./auth";
 import { db } from "./db";
 import { redirect } from "next/navigation";
+import { isDemoMode } from "./mode";
 export class AppError extends Error {
   constructor(
     message: string,
@@ -11,7 +12,9 @@ export class AppError extends Error {
   }
 }
 export async function requireAdmin() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  if (isDemoMode())
+    throw new AppError("La administración requiere el modo conectado.", 503);
+  const session = await getAuth().api.getSession({ headers: await headers() });
   if (!session) throw new AppError("Iniciá sesión para continuar.", 401);
   const user = await db.user.findUnique({ where: { id: session.user.id } });
   if (user?.role !== "admin") throw new AppError("Acceso denegado.", 403);

@@ -1,5 +1,14 @@
 # Verificación realizada el 3 de noviembre de 2026
 
+## Modo demo — 23 de noviembre de 2026
+
+- Build de Vercel ejecutado con `APP_MODE=demo` y `DATABASE_URL`, `DIRECT_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` y `NEXT_PUBLIC_APP_URL` vacíos: compilación correcta, sin migraciones ni conexión PostgreSQL.
+- `npm run test:demo`: 3 pruebas aprobadas; catálogo, filtros, configuración y cálculo de finalización con PostgreSQL deliberadamente inaccesible.
+- `npm run test:demo:browser`: 2 pruebas aprobadas sobre el servidor compilado de producción sin variables de base ni autenticación. Recorrido móvil, carrito persistente, finalización sin solicitudes POST, filtros y pantallas administrativas de información.
+- Escrituras de pedidos, productos, inventario, configuración y subidas; login y consulta de sesión: bloqueadas con HTTP 503 en demo.
+- `npm test`: 5 pruebas unitarias aprobadas. TypeScript sin errores.
+- La demostración no guarda compradores, pedidos, ventas ni stock. Modo real conservado y seleccionable con `APP_MODE=live`; las suites de integración PostgreSQL anteriores no se repitieron para este cambio.
+
 ## Actualización de identidad SANTOS
 
 Logos originales incorporados en cabecera, pie, panel, login e iconos; nombre persistido en PostgreSQL. Mockup provisorio de remeras generado y guardado en `public/brand/santos-shirts-v2.webp`. Verificación de navegador sobre el servidor local: HTTP 200, todas las imágenes cargadas y ausencia de desbordamiento a 390 px. TypeScript y build correctos tras integrar la identidad. Capturas: `test-results/santos-desktop.png`, `test-results/santos-mobile.png` y `test-results/santos-login-mobile.png`. Las suites completas de abajo corresponden a la verificación funcional previa; no se repitieron por este cambio visual.

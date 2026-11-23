@@ -3,8 +3,14 @@ import sharp from "sharp";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { requireAdmin, sameOrigin, AppError } from "@/lib/security";
+import { isDemoMode } from "@/lib/mode";
 export const runtime = "nodejs";
 export async function POST(request: Request) {
+  if (isDemoMode())
+    return NextResponse.json(
+      { error: "Las subidas están deshabilitadas en la demostración." },
+      { status: 503 },
+    );
   try {
     sameOrigin(request);
     await requireAdmin();

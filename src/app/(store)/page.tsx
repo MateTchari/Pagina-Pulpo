@@ -6,26 +6,14 @@ import {
   Sparkles,
   PackageCheck,
 } from "lucide-react";
-import { db } from "@/lib/db";
+import { storeProducts } from "@/lib/store-data";
 import { settings } from "@/lib/services";
 import { ProductCard } from "@/components/product-card";
 import { Empty } from "@/components/ui";
 import { Brand } from "@/components/brand";
 export default async function Home() {
   const s = await settings();
-  const products = await db.product.findMany({
-    where: {
-      active: true,
-      featured: true,
-      variants: { some: { active: true } },
-    },
-    include: {
-      variants: { where: { active: true } },
-      images: { orderBy: { position: "asc" } },
-    },
-    take: 4,
-    orderBy: { createdAt: "desc" },
-  });
+  const products = await storeProducts({}, true);
   return (
     <>
       <section className="hero">

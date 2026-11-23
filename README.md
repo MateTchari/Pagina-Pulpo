@@ -1,6 +1,16 @@
 <<<<<<< HEAD
 # Tienda online + gestión integral
 
+## Versión de demostración para el cliente
+
+El modo predeterminado ahora es **demo**, sin PostgreSQL ni claves. Subí los cambios a GitHub y Vercel usará `npm run build:vercel`: genera el cliente Prisma necesario para compilar, pero **no conecta una base, no aplica migraciones ni exige secretos**. Si habías configurado `APP_MODE=live` en Vercel, cambialo a `demo` y volvé a desplegar.
+
+El cliente puede navegar inicio, catálogo de muestra, filtros, variantes, carrito persistente y finalización de prueba. Un aviso identifica los precios, productos y stock como ejemplos. El checkout no envía datos ni crea pedidos; las escrituras, subidas y autenticación están bloqueadas en el backend. El carrito demo está separado del real. No se publican credenciales ni un acceso administrativo de prueba.
+
+Para ejecutar esta versión localmente: `npm run dev`. No hace falta iniciar PostgreSQL.
+
+Para activar el sistema real más adelante: definí **`APP_MODE=live`** junto con las variables de PostgreSQL y Better Auth, aplicá las migraciones y redeplegá. Las instrucciones de base y administrador que siguen corresponden a ese modo conectado. En desarrollo, agregá `APP_MODE=live` a tu `.env` antes de usar los módulos reales.
+
 Next.js App Router, TypeScript, Tailwind, componentes reutilizables con Radix (patrón shadcn/ui), PostgreSQL, Prisma, Better Auth, Zod y Recharts. Sin servicios pagos ni código Android de la referencia.
 
 ## Inicio rápido
