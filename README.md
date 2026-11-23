@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Tienda online + gestión integral
 
 Next.js App Router, TypeScript, Tailwind, componentes reutilizables con Radix (patrón shadcn/ui), PostgreSQL, Prisma, Better Auth, Zod y Recharts. Sin servicios pagos ni código Android de la referencia.
@@ -94,3 +95,6 @@ Ver `DECISIONES_PENDIENTES.md`. Sin pasarela, cobros, impuestos, emails, envío 
 - [Better Auth y Prisma](https://better-auth.com/docs/adapters/prisma)
 - [Better Auth email/contraseña](https://better-auth.com/docs/authentication/email-password)
 - [PostgreSQL local embebido](https://github.com/leinelissen/embedded-postgres)
+=======
+# Pagina-Pulpo
+>>>>>>> 36626ce5c016dbd7ea6e37a536314b44fea586b8
