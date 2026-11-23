@@ -82,6 +82,28 @@ Seed opcional: `npm run seed:demo -- --demo`. Crea un producto identificado como
 
 ## Despliegue propio
 
+### Vercel
+
+**Si conectaste Supabase:** tenés el instalador completo en [`supabase/setup.sql`](supabase/setup.sql) y el procedimiento de SQL Editor, conexión y alta administrativa en [`supabase/README.md`](supabase/README.md).
+
+Vercel no ejecuta el PostgreSQL local de tu PC. Conectá una base PostgreSQL online desde **Storage → Marketplace** del proyecto (por ejemplo, una integración PostgreSQL disponible en tu cuenta). Copiá la URL de conexión PostgreSQL del proveedor a `DATABASE_URL` en **Settings → Environment Variables → Production**. Si usa pool y proporciona una URL directa para migraciones, guardá esta última como `DIRECT_URL`. Nunca subas `.env` al repositorio.
+
+También configurá:
+
+- `BETTER_AUTH_SECRET`: secreto aleatorio de al menos 32 caracteres; generarlo con `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`.
+- `BETTER_AUTH_URL`: URL HTTPS de tu tienda, por ejemplo `https://TU-PROYECTO.vercel.app`.
+- `NEXT_PUBLIC_APP_URL`: la misma URL HTTPS.
+
+El archivo `vercel.json` usa `npm run build:vercel`: valida la configuración, genera Prisma Client, aplica migraciones pendientes y compila Next.js. Si tenés un Build Command sobrescrito en el panel de Vercel, cambialo a ese comando. Subí los cambios y ejecutá **Redeploy** después de agregar las variables; un despliegue anterior no recibe las nuevas variables. El chequeo no imprime credenciales ni reemplaza la verificación real de conexión que hace Prisma.
+
+Usá otra base para Preview; este comando aplica migraciones a la base del entorno seleccionado. No compartas la base de producción con despliegues de prueba. Las migraciones crean tablas, pero no copian productos, configuración ni administradores de tu PC. Para crear el administrador remoto, ejecutá `npm run admin:create` desde una terminal local que tenga `DATABASE_URL` apuntando explícitamente a la base online; no publiques esas credenciales ni ejecutes seeds de prueba sobre ella.
+
+**Límite pendiente para Vercel:** las nuevas fotos administrativas todavía se escriben en `uploads/` local. Para usar esa función en Vercel hay que adaptar subida y lectura a almacenamiento de objetos persistente. Las imágenes SANTOS incluidas en `public/brand/` sí se publican con el proyecto. Resolver la conexión PostgreSQL permite cargar la tienda, pero no adapta automáticamente el almacenamiento de fotos.
+
+Si falla, revisá los **Build Logs** si no compila o los **Runtime Logs** al abrir la página. Compartí el nombre y mensaje del error sin secretos. No uses `db:local`, `setup` ni `db push --force-reset` como parte del despliegue.
+
+### Servidor Node con disco persistente
+
 Servidor Node y PostgreSQL. Configurá `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` y `NEXT_PUBLIC_APP_URL` con el dominio HTTPS definitivo. Ejecutá `npm ci`, `npm run db:migrate`, `npm run build` y `npm start`. Usá volumen persistente para `uploads/`, proxy HTTPS con límite de cuerpo de 6 MB y copias de seguridad. Cookies Secure en producción; para HTTP local usá `npm run dev`. No usar export estático ni disco efímero. No se publicó ningún sitio.
 
 ## Pendiente de definición
